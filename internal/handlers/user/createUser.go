@@ -2,12 +2,13 @@ package user
 
 import (
 	"main/internal/validate"
+	"time"
 
 	"fmt"
 
 	"github.com/go-playground/locales/en"
-	"github.com/gofiber/fiber/v2"
 	enTranslations "github.com/go-playground/validator/v10/translations/en"
+	"github.com/gofiber/fiber/v2"
 )
 
 type User struct {
@@ -19,6 +20,7 @@ type User struct {
 
 func HandlerUser(c *fiber.Ctx) error {
 	var err error
+	var errStr string = fmt.Sprintf("✋ Errors!\n\n\n")
 	c.Accepts("application/json")
 	user := User{}
 	c.BodyParser(&user)
@@ -35,19 +37,23 @@ func HandlerUser(c *fiber.Ctx) error {
 		validator.GetTranslator(),
 	)
 
+	if !validate.IsDate(user.Birth) || !validate.IsDateValid(user.Birth) {
+		errStr += fmt.Sprintf("❌ Error: Birth must be of type yyyy-mm-dd\n")
+	}
 	err = validator.GetValidator().Struct(user)
-	if err == nil && validate.IsDate(user.Birth){
+	if err == nil && validate.IsDate(user.Birth) && validate.IsDateValid(user.Birth) {
 		return c.SendStatus(201)
 	}
 
-	var errStr string = fmt.Sprintf("✋ Errors!\n\n\n")
 	for _, e := range validator.TranslateError(err) {
 		errStr += fmt.Sprintf("❌ Error: %s\n", e)
 	}
 
-	if !validate.IsDate(user.Birth) {
-		errStr += fmt.Sprintf("❌ Error: Birth must be of type yyyy-mm-dd\n")
+	if !validate.IsDateValid(user.Birth) {
+		date, _ := time.Parse("2006-01-02", user.Birth)
+		errStr += fmt.Sprintf("❌ Error: Birth cannot be: \"%s\" \n", date.Format("January 02, 2006"))
 	}
+	// if birthTime
 
 	errStr += fmt.Sprintf("\n\n\n📥 Json: \n\n\n")
 	errStr += fmt.Sprintf("🏷️ Atribute: %s, 📦  Value: %v\n", "user", user.Name)
@@ -56,4 +62,5 @@ func HandlerUser(c *fiber.Ctx) error {
 	errStr += fmt.Sprintf("🏷️ Atribute: %s, 📦 Value: %v\n", "stack", user.Stack)
 	c.WriteString(errStr)
 	return c.SendStatus(fiber.StatusNotAcceptable)
+
 }
