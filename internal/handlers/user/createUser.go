@@ -1,7 +1,9 @@
 package user
 
 import (
+	mongodb "main/database/mongo"
 	"main/internal/validate"
+	userModel "main/models/user"
 	"time"
 
 	"fmt"
@@ -11,18 +13,12 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type User struct {
-	Name     string   `json:"name"     validate:"required,alpha,min=4,max=15"`
-	Nickname string   `json:"nickname" validate:"required,alphanum,min=4,max=15"`
-	Birth    string   `json:"birth"    validate:"required"`
-	Stack    []string `json:"stack"    validate:"max=50"`
-}
 
 func HandlerUser(c *fiber.Ctx) error {
 	var err error
 	var errStr string = fmt.Sprintf("✋ Errors!\n\n\n")
 	c.Accepts("application/json")
-	user := User{}
+	user := userModel.User{}
 	c.BodyParser(&user)
 	if err != nil {
 		return c.SendStatus(fiber.StatusInternalServerError)
@@ -42,6 +38,10 @@ func HandlerUser(c *fiber.Ctx) error {
 	}
 	err = validator.GetValidator().Struct(user)
 	if err == nil && validate.IsDate(user.Birth) && validate.IsDateValid(user.Birth) {
+    mongodb.Builder().
+      UseDatabase("backend").
+      UseCollection("users").
+      CreateUser(user)
 		return c.SendStatus(201)
 	}
 
