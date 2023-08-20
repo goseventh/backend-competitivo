@@ -2,21 +2,21 @@ package mongodb
 
 import (
 	"context"
-	"log"
-	"os"
-	"time"
-
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"log"
+	"os"
+	"time"
 )
 
 var conn *mongo.Client
 var insertsQueue map[string][]interface{}
 
 func Connect() {
-  var err error
-	if err = godotenv.Load(); err != nil {
+	var err error
+
+	if err = godotenv.Load(".env"); err != nil {
 		log.Fatalf("❌ Error: no .env file found")
 	}
 	uri := os.Getenv("MONGODB_URI")
@@ -24,7 +24,7 @@ func Connect() {
 		log.Fatalf("❌ Error: MONGODB_URI don't set!")
 	}
 
-  log.Printf("URI: %v", uri)
+	log.Printf("URI: %v", uri)
 
 	conn, err = mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
 	if err != nil {
