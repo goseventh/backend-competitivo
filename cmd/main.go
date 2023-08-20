@@ -8,7 +8,7 @@ import (
 
 func main() {
 	app := fiber.New(fiber.Config{
-		Prefork:       false,
+		Prefork:       true,
 		CaseSensitive: true,
 		StrictRouting: true,
     StreamRequestBody: true,
