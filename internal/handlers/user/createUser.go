@@ -14,7 +14,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func HandlerUser(c *fiber.Ctx) error {
+func HandlerCreateUser(c *fiber.Ctx) error {
 	var err error
 	var errStr string = fmt.Sprintf("✋ Errors!\n\n\n")
 	c.Accepts("application/json")
@@ -66,7 +66,7 @@ func HandlerUser(c *fiber.Ctx) error {
 
   mb := mongodb.Builder()
   mb.UseDatabase("backend").UseCollection("users")
-	if mb.IsExists(user) {
+	if mb.IsExists(user) || mb.IsExistsInBuffer(user) {
     errStr += fmt.Sprintf("❌ Error: This user is already registered\n")
     c.WriteString(errStr)
 		return c.SendStatus(fiber.StatusUnprocessableEntity)

@@ -9,6 +9,22 @@ import (
 	"main/models/user"
 )
 
+func (mb *MongoBase) GetUserByUUID(uuid string) (userModel.User, error) {
+	filter := bson.D{{Key: "uuid", Value: uuid}}
+	searchUser := new(userModel.User)
+	err := mb.collection.FindOne(context.TODO(), filter).Decode(searchUser)
+	return *searchUser, err
+}
+
+func (mb *MongoBase) IsExistsInBuffer(user userModel.User) bool {
+	for _, u := range insertsQueue["users"] {
+		if u.(userModel.User).Nickname == user.Nickname {
+			return true
+		}
+	}
+	return false
+}
+
 func (mb *MongoBase) IsExists(user userModel.User) bool {
 	filter := bson.D{{Key: "nickname", Value: user.Nickname}}
 	searchUser := new(userModel.User)
@@ -25,7 +41,7 @@ func (mb *MongoBase) IsExists(user userModel.User) bool {
 }
 
 func (mb *MongoBase) CreateUser(user userModel.User) {
-	user.ObjectID = primitive.NewObjectID()
+	user.SetObjectID(primitive.NewObjectID())
 	insertsQueue["users"] = append(insertsQueue["users"], user)
 }
 
