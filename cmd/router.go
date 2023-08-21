@@ -10,5 +10,7 @@ func Routers(app *fiber.App) {
 	app.Get("/pessoas/:id", user.HandlerGetUser)
 	app.Get("/pessoas:id?", user.HandlerGetUser)
   
+	app.Get("/contagem-pessoas", user.HandlerCountUsers)
+
 
 }
