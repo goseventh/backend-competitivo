@@ -17,14 +17,13 @@ func Connect() {
 	var err error
 
 	if err = godotenv.Load(".env"); err != nil {
-		log.Fatalf("❌ Error: no .env file found")
+		// log.Printf("❌ Error: no .env file found")
 	}
 	uri := os.Getenv("MONGODB_URI")
 	if uri == "" {
 		log.Fatalf("❌ Error: MONGODB_URI don't set!")
 	}
 
-	log.Printf("URI: %v", uri)
 
 	conn, err = mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
 	if err != nil {
@@ -41,10 +40,10 @@ func Connect() {
 }
 
 func (mb *MongoBase) tickerInsert() {
-	ticker := time.NewTicker(time.Second)
+	ticker := time.NewTicker(time.Second*10)
 	for {
 		<-ticker.C
-		mb.tickerUser()
+		// mb.tickerUser()
 	}
 }
 
