@@ -9,9 +9,10 @@ import (
 	"main/models/user"
 )
 
-func (mb *MongoBase) CountUsers() (int64, error) {
+func (mb *MongoBase) CountUsers() (int64, int, error) {
 	registedUsers, err := mb.collection.CountDocuments(context.TODO(), bson.D{})
-	return registedUsers, err
+  bufferUsers := len(insertsQueue["users"])
+	return registedUsers, bufferUsers, err
 }
 
 func (mb *MongoBase) GetUserByUUID(uuid string) (userModel.User, error) {

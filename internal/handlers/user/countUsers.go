@@ -10,12 +10,12 @@ import (
 func HandlerCountUsers(c *fiber.Ctx) error {
 	db := mongodb.Builder().UseDatabase("backend")
 	db.UseCollection("users")
-	users, err := db.CountUsers()
+	users, bufferUsers, err := db.CountUsers()
 	if err != nil {
 		c.SendString("❌ internal error")
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
-	return c.SendString(fmt.Sprintf("👌 Total users: %v", users))
+  return c.SendString(fmt.Sprintf("👌 Total users: %v\n Registered users: %v", users, bufferUsers))
 
 }
