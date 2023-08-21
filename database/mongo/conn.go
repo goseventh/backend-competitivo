@@ -43,7 +43,7 @@ func (mb *MongoBase) tickerInsert() {
 	ticker := time.NewTicker(time.Second*10)
 	for {
 		<-ticker.C
-		// mb.tickerUser()
+		mb.tickerUser()
 	}
 }
 
