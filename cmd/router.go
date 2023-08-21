@@ -6,8 +6,9 @@ import (
 )
 
 func Routers(app *fiber.App) {
-	app.Post("/pessoas", user.HandlerUser)
-	app.Get("/pessoas:id", user.HandlerUser)
-	app.Get("/pessoas:id?", user.HandlerUser)
+	app.Post("/pessoas", user.HandlerCreateUser)
+	app.Get("/pessoas/:id", user.HandlerGetUser)
+	app.Get("/pessoas:id?", user.HandlerGetUser)
+  
 
 }
