@@ -10,6 +10,10 @@ func (mb *MongoBase) CreateUser(user userModel.User) {
 	insertsQueue["users"] = append(insertsQueue["users"], user)
 }
 
+func (mb *MongoBase) CreateUserNow(user userModel.User) {
+  mb.collection.InsertOne(context.TODO(), user)
+}
+
 func (mb *MongoBase) tickerUser() {
 	if mb.collection == nil {
 		return
