@@ -40,7 +40,7 @@ func Connect() {
 }
 
 func (mb *MongoBase) tickerInsert() {
-	ticker := time.NewTicker(time.Second*10)
+	ticker := time.NewTicker(time.Second)
 	for {
 		<-ticker.C
 		mb.tickerUser()

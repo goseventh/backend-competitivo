@@ -10,10 +10,26 @@ import (
 )
 
 func (mb *MongoBase) GetUserByUUID(uuid string) (userModel.User, error) {
-	filter := bson.D{{Key: "uuid", Value: uuid}}
+  var err error
 	searchUser := new(userModel.User)
-	err := mb.collection.FindOne(context.TODO(), filter).Decode(searchUser)
+  *searchUser, err = mb.GetUserByUUIDInBuffer(uuid)
+  if searchUser.UUID != "" {
+    return *searchUser, err
+  }
+
+	filter := bson.D{{Key: "uuid", Value: uuid}}
+	err = mb.collection.FindOne(context.TODO(), filter).Decode(searchUser)
 	return *searchUser, err
+}
+
+
+func (mb *MongoBase) GetUserByUUIDInBuffer(uuid string) (userModel.User, error) {
+	for _, u := range insertsQueue["users"] {
+		if u.(userModel.User).UUID == uuid{
+			return u.(userModel.User), nil
+		}
+	}
+  return userModel.User{}, mongo.ErrNoDocuments
 }
 
 func (mb *MongoBase) IsExistsInBuffer(user userModel.User) bool {
