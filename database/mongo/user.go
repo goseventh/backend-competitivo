@@ -5,14 +5,50 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"main/models/user"
 )
 
 func (mb *MongoBase) CountUsers() (int64, int, error) {
 	registedUsers, err := mb.collection.CountDocuments(context.TODO(), bson.D{})
-  bufferUsers := len(insertsQueue["users"])
+	bufferUsers := len(insertsQueue["users"])
 	return registedUsers, bufferUsers, err
+}
+
+func (mb *MongoBase) SearchUsersByTerm(term string) ([]userModel.User, error) {
+	filter := bson.D{
+		{
+			Key: "$or",
+			Value: bson.A{
+				bson.D{{Key: "nickname", Value: primitive.Regex{Pattern: term, Options: "i"}}},
+				bson.D{{Key: "name", Value: primitive.Regex{Pattern: term, Options: "i"}}},
+				bson.D{{Key: "stack", Value: primitive.Regex{Pattern: term, Options: "i"}}},
+			},
+		},
+	}
+
+	findOptions := options.Find().SetLimit(50)
+	cur, err := mb.collection.Find(context.TODO(), filter, findOptions)
+	if err != nil {
+		return nil, err
+	}
+	defer cur.Close(context.TODO())
+
+	var users []userModel.User
+	for cur.Next(context.TODO()) {
+		var user userModel.User
+		if err := cur.Decode(&user); err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+
+	if err := cur.Err(); err != nil {
+		return nil, err
+	}
+
+	return users, nil
 }
 
 func (mb *MongoBase) GetUserByUUID(uuid string) (userModel.User, error) {
