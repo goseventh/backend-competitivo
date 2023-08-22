@@ -2,12 +2,14 @@ package mongodb
 
 import (
 	"context"
+	"log"
+	"main/models/user"
+	"runtime"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
-	"main/models/user"
 )
 
 func (mb *MongoBase) CountUsers() (int64, int, error) {
@@ -107,10 +109,10 @@ func (mb *MongoBase) CreateUserNow(user userModel.User) {
 }
 
 func (mb *MongoBase) CreateUserWithWorkers(user userModel.User) {
-  msg := channelMSG{}
-  msg.context = &user
-  msg.collection = mb.collection
-  mb.channel <- msg
+	pool.Submit(func() {
+		runtime.Gosched()
+		mb.collection.InsertOne(context.TODO(), user)
+	})
 }
 
 func (mb *MongoBase) tickerUser() {
