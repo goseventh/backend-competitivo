@@ -3,6 +3,7 @@ package mongodb
 import (
 	"context"
 	userModel "main/models/user"
+	"runtime"
 
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -30,6 +31,7 @@ func Builder() *MongoBase {
 }
 func worker(channel <-chan channelMSG) {
 	for msg := range channel {
+    runtime.Gosched()
 		msg.collection.InsertOne(context.TODO(), msg.context)
 	}
 }
