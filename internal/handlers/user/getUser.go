@@ -36,7 +36,6 @@ func HandlerFindUser(c *fiber.Ctx) error {
 		}
 		responseBody = append(responseBody, userBody)
 	}
-	fmt.Println(searchUsers)
 	return c.JSON(responseBody)
 
 }
