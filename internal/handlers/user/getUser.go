@@ -8,6 +8,14 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+type response struct {
+	Id       string   `json:"id"`
+	Name     string   `json:"name"`
+	Nickname string   `json:"nickname"`
+	Birth    string   `json:"birth"`
+	Stack    []string `json:"stack"`
+}
+
 func HandlerFindUser(c *fiber.Ctx) error {
 	t := c.Query("t")
 	if t == "" {
@@ -19,13 +27,6 @@ func HandlerFindUser(c *fiber.Ctx) error {
 		UseDatabase("backend").
 		UseCollection("users")
 	searchUsers, _ := db.SearchUsersByTerm(t)
-	type response struct {
-		Id       string
-		Name     string
-		Nickname string
-		Birth    string
-		Stack    []string
-	}
 	responseBody := []response{}
 	for _, u := range searchUsers {
 		userBody := response{
@@ -54,13 +55,7 @@ func HandlerGetUser(c *fiber.Ctx) error {
 		c.SendString("💥 internal error")
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
-	var responseBody = struct {
-		Id       string
-		Name     string
-		Nickname string
-		Birth    string
-		Stack    []string
-	}{
+	responseBody := response{
 		user.UUID,
 		user.Name,
 		user.Nickname,
