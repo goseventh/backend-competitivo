@@ -16,6 +16,7 @@ func HandlerFindUser(c *fiber.Ctx) error {
 	searchUsers, _ := db.SearchUsersByTerm(t)
   fmt.Printf("term: %v\n", t)
 	type response struct {
+    Id string
 		Name     string
 		Nickname string
 		Birth    string
@@ -24,6 +25,7 @@ func HandlerFindUser(c *fiber.Ctx) error {
 	responseBody := []response{}
 	for _, u := range searchUsers {
 		userBody := response{
+      u.UUID, 
 			u.Name,
 			u.Nickname,
 			u.Birth, u.Stack,
