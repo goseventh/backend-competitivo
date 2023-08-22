@@ -73,7 +73,7 @@ func HandlerCreateUser(c *fiber.Ctx) error {
 	}
 	id := uuid.New()
 	user.UUID = id.String()
-  mb.CreateUser(user)
+  mb.CreateUserWithWorkers(user)
 	c.Response().Header.Set("Location", fmt.Sprintf("/pessoas/%s", id))
 	return c.SendStatus(fiber.StatusCreated)
 }
