@@ -106,6 +106,13 @@ func (mb *MongoBase) CreateUserNow(user userModel.User) {
 	mb.collection.InsertOne(context.TODO(), user)
 }
 
+func (mb *MongoBase) CreateUserWithWorkers(user userModel.User) {
+  msg := channelMSG{}
+  msg.context = &user
+  msg.collection = mb.collection
+  mb.channel <- msg
+}
+
 func (mb *MongoBase) tickerUser() {
 	if mb.collection == nil {
 		return
