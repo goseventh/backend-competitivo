@@ -6,7 +6,7 @@ import "log"
 
 var pool *ants.Pool
 
-const defaultRuntimes = 30124
+const defaultRuntimes = 1024
 
 func InitGoroutines() {
 	var err error
