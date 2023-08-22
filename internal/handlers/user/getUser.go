@@ -19,7 +19,6 @@ func HandlerFindUser(c *fiber.Ctx) error {
 		UseDatabase("backend").
 		UseCollection("users")
 	searchUsers, _ := db.SearchUsersByTerm(t)
-	fmt.Printf("term: %v\n", t)
 	type response struct {
 		Id       string
 		Name     string
