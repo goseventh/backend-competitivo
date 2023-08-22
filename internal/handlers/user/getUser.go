@@ -10,13 +10,18 @@ import (
 
 func HandlerFindUser(c *fiber.Ctx) error {
 	t := c.Query("t")
+	if t == "" {
+		msg := fmt.Sprintf("❌ undefined search term")
+		c.SendString(msg)
+		return c.SendStatus(fiber.StatusBadRequest)
+	}
 	db := mongodb.Builder().
 		UseDatabase("backend").
 		UseCollection("users")
 	searchUsers, _ := db.SearchUsersByTerm(t)
-  fmt.Printf("term: %v\n", t)
+	fmt.Printf("term: %v\n", t)
 	type response struct {
-    Id string
+		Id       string
 		Name     string
 		Nickname string
 		Birth    string
@@ -25,14 +30,14 @@ func HandlerFindUser(c *fiber.Ctx) error {
 	responseBody := []response{}
 	for _, u := range searchUsers {
 		userBody := response{
-      u.UUID, 
+			u.UUID,
 			u.Name,
 			u.Nickname,
 			u.Birth, u.Stack,
 		}
 		responseBody = append(responseBody, userBody)
 	}
-  fmt.Println(searchUsers)
+	fmt.Println(searchUsers)
 	return c.JSON(responseBody)
 
 }
@@ -52,11 +57,13 @@ func HandlerGetUser(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 	var responseBody = struct {
+		Id       string
 		Name     string
 		Nickname string
 		Birth    string
 		Stack    []string
 	}{
+		user.UUID,
 		user.Name,
 		user.Nickname,
 		user.Birth,
