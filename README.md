@@ -13,3 +13,7 @@ Neste repositório, você encontrará o **código-fonte** completo da api rest e
 :lock: **internal**: Aqui, estão localizados os pacotes internos do projeto. Esses pacotes contêm a lógica de negócios e a implementação central do backend. Eles são projetados para serem utilizados internamente dentro do projeto e podem ser importados por outros componentes do servidor, como os arquivos main na pasta "cmd".
 
 :loudspeaker: **pkg**: Nesta pasta, você encontrará pacotes públicos. Esses pacotes são bibliotecas ou componentes reutilizáveis que podem ser compartilhados com outros projetos ou utilizados por desenvolvedores externos. Eles oferecem funcionalidades complexas que podem ser facilmente integradas em outros sistemas.egócio 
+
+# 🤲 Créditos:
+❤️ **Criado por: [@alph4b3th](https://github.com/alph4b3th)**
+
