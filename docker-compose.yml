@@ -1,8 +1,12 @@
 version: '3.5'
 services:
   api1: # API - Instância 01
-    image: api
+    image: backend
     hostname: api1
+    environment:
+      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASS}@db
+    env_file:
+      - .env
     depends_on:
       - db
     expose:
@@ -14,8 +18,12 @@ services:
           memory: '0.5GB'
 
   api2: # API - Instância 01
-    image: api
+    image: backend
     hostname: api2
+    environment:
+      - MONGO_URI=mongodb://${MONGO_USER}:${MONGO_PASS}@db
+    env_file:
+      - .env
     depends_on:
       - db
     expose:
@@ -42,11 +50,24 @@ services:
           memory: '0.5GB'
 
   db: # Banco de dados
-   image: postgres
-   deploy:
+    image: mongo:7.0.0-rc5
+    container_name: mongo-db
+    volumes:
+      - ./mongo_data:/data/db
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_NAME}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASS}
+    logging:
+       driver: "json-file"
+       options:
+          max-size: "10m"
+          max-file: "5"
+    deploy:
       resources:
         limits:
           cpus: '0.75'
           memory: '1.5GB'
-   # ...
-
